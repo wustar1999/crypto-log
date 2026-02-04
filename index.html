@@ -3,99 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crypto Journal Pro</title>
+    <title>Crypto Journal v3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background-color: #f8fafc; font-family: -apple-system, system-ui, sans-serif; }
-        .card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
-        .preview-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; display: none; }
+        body { background-color: #f1f5f9; font-family: -apple-system, system-ui, sans-serif; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        input, select, textarea { -webkit-appearance: none; outline: none; }
     </style>
 </head>
-<body class="p-4 pb-20 text-gray-800">
+<body class="p-4 pb-12">
 
-    <header class="mb-6">
-        <h1 class="text-2xl font-bold">📊 交易復盤紀錄</h1>
-    </header>
+    <div class="max-w-md mx-auto">
+        <h1 class="text-2xl font-black mb-6 flex items-center gap-2">
+            <span class="bg-black text-white px-2 py-1 rounded">PRO</span> 交易復盤
+        </h1>
 
-    <section class="card p-5 mb-8">
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-bold text-gray-600">1. 交易日期</label>
-                <input type="date" id="date" class="mt-1 block w-full rounded-lg border-gray-300 p-3 border focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
+        <section class="card p-6 mb-6">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="col-span-2">
+                    <label class="block text-xs font-bold text-gray-400 uppercase">交易日期</label>
+                    <input type="date" id="date" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-0">
+                </div>
                 <div>
-                    <label class="block text-sm font-bold text-gray-600">2. 幣種</label>
-                    <select id="coin" class="mt-1 block w-full rounded-lg border-gray-300 p-3 border bg-white shadow-sm">
+                    <label class="block text-xs font-bold text-gray-400 uppercase">幣種</label>
+                    <select id="coin" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-0 text-lg font-bold">
                         <option>BTC</option><option>ETH</option><option>SOL</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-gray-600">3. 策略</label>
-                    <select id="strategy" class="mt-1 block w-full rounded-lg border-gray-300 p-3 border bg-white shadow-sm">
+                    <label class="block text-xs font-bold text-gray-400 uppercase">策略</label>
+                    <select id="strategy" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-0">
                         <option>突破追多</option><option>回踩做多</option><option>震盪高空</option>
                     </select>
                 </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-bold text-gray-600">4. 交易金額</label>
-                    <input type="number" id="amount" placeholder="USD" class="mt-1 block w-full rounded-lg border-gray-300 p-3 border">
+                    <label class="block text-xs font-bold text-gray-400 uppercase">金額</label>
+                    <input type="number" id="amount" placeholder="USD" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-0">
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-gray-600">5. 損益金額</label>
-                    <input type="number" id="pnl" placeholder="+/- USD" class="mt-1 block w-full rounded-lg border-gray-300 p-3 border font-bold">
+                    <label class="block text-xs font-bold text-gray-400 uppercase">損益</label>
+                    <input type="number" id="pnl" placeholder="+/-" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-0 font-bold text-blue-600">
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-bold text-gray-600">6. 上傳截圖</label>
-                <input type="file" id="imageFile" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700">
-                <img id="preview" class="preview-img mt-3">
-            </div>
-
-            <div>
-                <label class="block text-sm font-bold text-gray-600">7. 開單心情</label>
-                <textarea id="note" rows="2" class="mt-1 block w-full rounded-lg border-gray-300 p-3 border" placeholder="輸入當下心態..."></textarea>
-            </div>
-
-            <button onclick="saveRecord()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-transform">儲存交易紀錄</button>
-        </div>
-    </section>
-
-    <section class="card p-5 mb-8">
-        <h2 class="text-lg font-bold mb-4 text-gray-700">策略損益分布</h2>
-        <canvas id="strategyChart"></canvas>
-    </section>
-
-    <section class="card p-5">
-        <h2 class="text-lg font-bold mb-4 text-gray-700">歷史紀錄清單</h2>
-        <div id="historyList" class="space-y-4"></div>
-        <button onclick="clearData()" class="mt-8 text-red-400 text-xs w-full text-center underline">清除手機緩存資料</button>
-    </section>
-
-    <script>
-        let myRecords = JSON.parse(localStorage.getItem('crypto_logs')) || [];
-        let chart;
-        let currentImageData = "";
-
-        // 監聽圖片上傳並轉為 Base64 (壓縮版)
-        document.getElementById('imageFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    // 畫布壓縮圖片
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const maxW = 800;
-                    const scale = maxW / img.width;
-                    canvas.width = maxW;
-                    canvas.height = img.height * scale;
-                    ctx.drawImage(img, 0, 0, canvas.width,
+            <div class="mb-4">
+                <label class="block text-xs font

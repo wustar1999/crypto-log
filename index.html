@@ -3,49 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crypto Journal v3</title>
+    <title>Crypto Log</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background-color: #f1f5f9; font-family: -apple-system, system-ui, sans-serif; }
-        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        input, select, textarea { -webkit-appearance: none; outline: none; }
+        /* 融入你喜歡的普普/漫畫風格：粗邊框、鮮豔感 */
+        body { background-color: #FFDE59; font-family: sans-serif; padding: 15px; }
+        .comic-card { 
+            background: white; 
+            border: 3px solid black; 
+            border-radius: 0px; 
+            box-shadow: 8px 8px 0px black; 
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .comic-input {
+            border: 2px solid black;
+            padding: 10px;
+            width: 100%;
+            margin-top: 5px;
+            border-radius: 0px;
+        }
+        .btn-black {
+            background: black;
+            color: white;
+            padding: 15px;
+            width: 100%;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-black:active { transform: translate(2px, 2px); }
     </style>
 </head>
-<body class="p-4 pb-12">
+<body>
 
-    <div class="max-w-md mx-auto">
-        <h1 class="text-2xl font-black mb-6 flex items-center gap-2">
-            <span class="bg-black text-white px-2 py-1 rounded">PRO</span> 交易復盤
-        </h1>
+    <h1 style="font-size: 28px; font-weight: 900; border-bottom: 4px solid black; display: inline-block; margin-bottom: 20px;">CRYPTO JOURNAL</h1>
 
-        <section class="card p-6 mb-6">
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div class="col-span-2">
-                    <label class="block text-xs font-bold text-gray-400 uppercase">交易日期</label>
-                    <input type="date" id="date" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-0">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase">幣種</label>
-                    <select id="coin" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-0 text-lg font-bold">
-                        <option>BTC</option><option>ETH</option><option>SOL</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase">策略</label>
-                    <select id="strategy" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-0">
-                        <option>突破追多</option><option>回踩做多</option><option>震盪高空</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase">金額</label>
-                    <input type="number" id="amount" placeholder="USD" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-0">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase">損益</label>
-                    <input type="number" id="pnl" placeholder="+/-" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-0 font-bold text-blue-600">
-                </div>
+    <div class="comic-card">
+        <div style="margin-bottom: 15px;">
+            <label>📅 交易日期</label>
+            <input type="date" id="date" class="comic-input">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+                <label>🪙 幣種</label>
+                <select id="coin" class="comic-input">
+                    <option>BTC</option><option>ETH</option><option>SOL</option>
+                </select>
             </div>
+            <div style="flex: 1;">
+                <label>🎯 策略</label>
+                <select id="strategy" class="comic-input">
+                    <option>突破追多</option><option>回踩做多</option><option>震盪高空</option>
+                </select>
+            </div>
+        </div>
 
-            <div class="mb-4">
-                <label class="block text-xs font
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+                <label>💰 金額</label>
+                <input type="number" id="amount" class="comic-input" placeholder="USD">
+            </div>
+            <div style="flex: 1;">
+                <label>📈 損益</label>
+                <input type="number" id="pnl" class="comic-input" placeholder="+/-">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>📸 截圖</label>
+            <input type="file" id="imageFile" accept="image/*" style="margin-top: 5px; display: block;">
+            <img id="preview" style="width: 100%; margin-top: 10px; border: 2px solid black; display: none;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>💭 心情</label>
+            <textarea id="note" class="comic-input" placeholder="今天心情如何？"></textarea>
+        </div>
+
+        <button onclick="saveRecord()" class="btn-black">儲存紀錄 SAVE</button>
+    </div>
+
+    <div class="comic-card">
+        <h2 style="font-weight: bold; margin-bottom: 10px;">📊 策略損益統計</h2>
+        <canvas id="strategyChart"></canvas>
+    </div>
+
+    <div id="historyList"></div>
+
+    <button onclick="localStorage.clear(); location.reload();" style="color: red; font-size: 12px; margin-top: 20px; width: 100%; text-align: center;">[ 清除所有資料 ]</button>
+
+    <script>
+        let myRecords = JSON.parse(localStorage.getItem('crypto_logs')) || [];
+        let currentImg = "";
+
+        // 預設日期
+        document.getElementById('date').valueAsDate = new Date();
+
+        // 圖片壓縮處理
+        document.getElementById('imageFile').onchange = function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const scale = 500 / img.width; // 縮小到 500 像素寬
+                    canvas.width = 500;
+                    canvas.height = img.height * scale;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    currentImg = canvas.toDataURL('image/jpeg', 0.4); // 大幅壓縮品質
+                    document.getElementById('preview').src = currentImg;
+                    document.getElementById('preview').style.display = 'block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        function saveRecord() {
+            const data = {
+                date: document.getElementById('date').value,
+                coin: document.getElementById('coin').value,
+                strategy: document.getElementById('strategy').value,
+                amount: document.getElementById('amount').value,
+                pnl: parseFloat(document.getElementById('pnl').value) || 0,
+                note: document.getElementById('note').value,
+                img: currentImg
+            };
+
+            try {
+                myRecords.push(data);
+                localStorage.setItem('crypto_logs', JSON.stringify(myRecords));
+                alert('儲存成功！');
+                location.reload();
+            } catch (e) {
+                alert('空間爆了！請不要選太大的照片，或先清除舊資料。');
+            }
+        }
+
+        function render() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = myRecords.map(r => `
+                <div class="comic-card">
+                    <p><b>${r.date}</b> | ${r.coin}</p>
+                    <p>策略: ${r.strategy}</p>
+                    <p style="font-size: 20px; font-weight: bold; color: ${r.pnl >= 0 ? 'green' : '

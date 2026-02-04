@@ -2,12 +2,12 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Crypto Journal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #f8fafc; font-family: -apple-system, system-ui, sans-serif; }
         .card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
     </style>
 </head>
@@ -15,110 +15,114 @@
 
     <header class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800">📊 交易復盤紀錄</h1>
-        <p class="text-sm text-gray-500">記錄每一筆成長的軌跡</p>
     </header>
 
     <section class="card p-5 mb-8">
-        <h2 class="text-lg font-semibold mb-4 border-b pb-2">新增紀錄</h2>
         <div class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700">交易日期</label>
-                <input type="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                <label class="block text-sm font-medium">交易日期</label>
+                <input type="date" id="date" class="mt-1 block w-full rounded-md border p-2">
             </div>
-
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">交易幣種</label>
-                    <select id="coin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
-                        <option>BTC</option>
-                        <option>ETH</option>
-                        <option>SOL</option>
+                    <label class="block text-sm font-medium">幣種</label>
+                    <select id="coin" class="mt-1 block w-full rounded-md border p-2">
+                        <option>BTC</option><option>ETH</option><option>SOL</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">開單策略</label>
-                    <select id="strategy" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
-                        <option>突破追多</option>
-                        <option>回踩做多</option>
-                        <option>震盪高空</option>
+                    <label class="block text-sm font-medium">策略</label>
+                    <select id="strategy" class="mt-1 block w-full rounded-md border p-2">
+                        <option>突破追多</option><option>回踩做多</option><option>震盪高空</option>
                     </select>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">交易金額 (USD)</label>
-                    <input type="number" id="amount" placeholder="1000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    <label class="block text-sm font-medium">金額 (USD)</label>
+                    <input type="number" id="amount" class="mt-1 block w-full rounded-md border p-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">損益金額 (+/-)</label>
-                    <input type="number" id="pnl" placeholder="-50" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    <label class="block text-sm font-medium">損益 (USD)</label>
+                    <input type="number" id="pnl" class="mt-1 block w-full rounded-md border p-2">
                 </div>
             </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700">截圖 (檔案或貼上)</label>
-                <input type="file" id="imageInput" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                <div id="previewContainer" class="mt-2 hidden">
-                    <img id="preview" src="#" class="max-h-40 rounded shadow-sm">
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700">開單心情 / 備註</label>
-                <textarea id="note" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" placeholder="當時心態如何？"></textarea>
-            </div>
-
-            <button onclick="saveRecord()" class="w-full bg-black text-white py-3 rounded-xl font-bold active:scale-95 transition">儲存紀錄</button>
+            <button onclick="saveRecord()" class="w-full bg-black text-white py-3 rounded-xl font-bold active:bg-gray-800">儲存紀錄</button>
         </div>
     </section>
 
     <section class="card p-5 mb-8">
-        <h2 class="text-lg font-semibold mb-4">本月策略損益統計</h2>
-        <canvas id="strategyChart" width="400" height="250"></canvas>
+        <h2 class="text-lg font-semibold mb-4">策略損益統計</h2>
+        <canvas id="strategyChart"></canvas>
     </section>
 
     <section class="card p-5">
-        <h2 class="text-lg font-semibold mb-4 text-gray-400">系統管理</h2>
-        <button class="text-sm text-indigo-600 font-medium">編輯幣種清單</button>
-        <span class="mx-2 text-gray-300">|</span>
-        <button class="text-sm text-indigo-600 font-medium">編輯策略清單</button>
+        <h2 class="text-lg font-semibold mb-4">歷史紀錄</h2>
+        <div id="historyList" class="space-y-2 text-sm"></div>
+        <button onclick="clearData()" class="mt-4 text-red-500 text-xs">清除所有資料</button>
     </section>
 
     <script>
-        // 初始化圖表
-        const ctx = document.getElementById('strategyChart').getContext('2d');
-        let chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['突破追多', '回踩做多', '震盪高空'],
-                datasets: [{
-                    label: '損益加總 (USD)',
-                    data: [120, -50, 200],
-                    backgroundColor: ['#4ade80', '#f87171', '#60a5fa']
-                }]
-            },
-            options: { responsive: true }
-        });
+        let myRecords = JSON.parse(localStorage.getItem('crypto_logs')) || [];
+        let chart;
 
-        // 處理剪貼簿圖片
-        window.addEventListener('paste', e => {
-            const items = e.clipboardData.items;
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.indexOf('image') !== -1) {
-                    const blob = items[i].getAsFile();
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        document.getElementById('preview').src = event.target.result;
-                        document.getElementById('previewContainer').classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(blob);
-                }
-            }
-        });
+        // 初始化
+        window.onload = function() {
+            renderHistory();
+            updateChart();
+            document.getElementById('date').valueAsDate = new Date();
+        };
 
         function saveRecord() {
-            alert('紀錄已暫存在本地（這是一個 Demo，實際儲存需連接後端資料庫或 LocalStorage）');
+            const record = {
+                date: document.getElementById('date').value,
+                coin: document.getElementById('coin').value,
+                strategy: document.getElementById('strategy').value,
+                amount: parseFloat(document.getElementById('amount').value) || 0,
+                pnl: parseFloat(document.getElementById('pnl').value) || 0
+            };
+
+            myRecords.push(record);
+            localStorage.setItem('crypto_logs', JSON.stringify(myRecords));
+            
+            alert('儲存成功！');
+            renderHistory();
+            updateChart();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = myRecords.map(r => 
+                `<div class="border-b pb-1">📅 ${r.date} | ${r.coin} | ${r.strategy} | <span class="${r.pnl >= 0 ? 'text-green-500' : 'text-red-500'}">${r.pnl}</span></div>`
+            ).reverse().join('');
+        }
+
+        function updateChart() {
+            const summary = {};
+            myRecords.forEach(r => {
+                summary[r.strategy] = (summary[r.strategy] || 0) + r.pnl;
+            });
+
+            const ctx = document.getElementById('strategyChart').getContext('2d');
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(summary),
+                    datasets: [{
+                        label: '損益加總',
+                        data: Object.values(summary),
+                        backgroundColor: '#6366f1'
+                    }]
+                }
+            });
+        }
+
+        function clearData() {
+            if(confirm('確定要刪除所有紀錄嗎？')) {
+                localStorage.removeItem('crypto_logs');
+                location.reload();
+            }
         }
     </script>
 </body>
